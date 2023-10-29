@@ -12,7 +12,7 @@ set mouse=a                        " enable mouse in all modes
 set t_Co=256                       " use vim with 256 colors
 set autoindent                     " automatic indent
 set tabstop=2                      " 1 tab = 2 columns
-set shiftwidth=4                   " level of indentation
+set shiftwidth=2                   " level of indentation
 " set cursorline                   " highlight the current line
 set ruler                          " show cursor location at downright corner
 set wrap                           " text wrap
