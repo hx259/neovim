@@ -1,4 +1,3 @@
-
 -- lazy package manager, try ":Lazy" to view
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -15,5 +14,6 @@ vim.opt.rtp:prepend(lazypath)
 
 -- vim options
 require("nvim-options")
+
 -- plugin management
 require("lazy").setup("plugins")
