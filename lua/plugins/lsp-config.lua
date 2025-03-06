@@ -31,9 +31,13 @@ return {
 				capabilities = capabilities,
 			})
 			lspconfig.clangd.setup({
-				capabilities = capabilities,
 				-- cmd = { "/usr/lib/llvm-14/bin/clang++", "--background-index" },
 				-- root_dir = lspconfig.util.root_pattern("compile_commands.json", ".clangd"),
+        capabilities = capabilities,
+        cmd = {
+          "clangd",
+          "--query-driver=/usr/bin/clang++",
+        },
 			})
 			lspconfig.cmake.setup({
 				capabilities = capabilities,
@@ -55,6 +59,8 @@ return {
 			vim.keymap.set("n", "<leader>h", vim.lsp.buf.hover, {})
 			vim.keymap.set("n", "<leader>d", vim.lsp.buf.definition, {})
 			vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, {})
+      vim.keymap.set("n", "en", vim.diagnostic.goto_next)
+      vim.keymap.set("n", "EN", vim.diagnostic.goto_prev)
 		end,
 	},
 }

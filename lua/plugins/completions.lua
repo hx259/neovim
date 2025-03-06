@@ -60,6 +60,11 @@ return {
         return false
       end
 
+      local is_unvisited_placeholder = function(node)
+      -- Return true if the node is active and has not been visited before
+      return node and not node.visited
+      end
+
       cmp.setup({
         snippet = {
           expand = function(args)
@@ -76,7 +81,12 @@ return {
             if cmp.visible() then
               cmp.select_next_item()
             elseif luasnip.expand_or_jumpable() then
-              luasnip.expand_or_jump()
+              -- local snippet_active = luasnip.session.current_nodes[vim.api.nvim_get_current_buf()]
+              -- if is_unvisited_placeholder(snippet_active) then
+                 luasnip.expand_or_jump()
+              -- else
+              --   fallback()
+              -- end
             elseif jump_over_bracket() then
               -- Jump over the closing bracket and do nothing else
               return
@@ -90,7 +100,12 @@ return {
             if cmp.visible() then
               cmp.select_prev_item()
             elseif luasnip.jumpable(-1) then
-              luasnip.jump(-1)
+              local snippet_active = luasnip.session.current_nodes[vim.api.nvim_get_current_buf()]
+              if is_unvisited_placeholder(snippet_active) then
+                luasnip.jump(-1)
+              else
+                fallback()
+              end
             else
               fallback()
             end
