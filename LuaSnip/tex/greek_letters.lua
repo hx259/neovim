@@ -30,6 +30,7 @@ return {
   s({ trig = "gy", snippetType = "snippet" }, { t("\\psi") }),
   s({ trig = "go", snippetType = "snippet" }, { t("\\omega") }),
   -- capital letters
+  s({ trig = "gE", snippetType = "snippet" }, { t("\\mathcal{E}") }),
   s({ trig = "gG", snippetType = "snippet" }, { t("\\Gamma") }),
   s({ trig = "gD", snippetType = "snippet" }, { t("\\Delta") }),
   s({ trig = "gTH", snippetType = "snippet" }, { t("\\Theta") }),
