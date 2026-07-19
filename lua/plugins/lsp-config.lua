@@ -1,66 +1,109 @@
+-- lsp-config.lua
+-- Neovim 0.11+ native LSP configuration
+-- Replaces the old mason-lspconfig + nvim-lspconfig pipeline
+--
+-- Mason is kept solely as a convenient installer for LSP servers.
+-- The actual LSP configuration uses vim.lsp.config() + vim.lsp.enable().
+
 return {
+	-- Mason: only used to install servers (not to configure them)
 	{
 		"williamboman/mason.nvim",
 		config = function()
 			require("mason").setup()
 		end,
 	},
+	-- Mason tool installer: auto-install your servers
 	{
-		"williamboman/mason-lspconfig.nvim",
+		"WhoIsSethDaniel/mason-tool-installer.nvim",
+		dependencies = { "williamboman/mason.nvim" },
 		config = function()
-			require("mason-lspconfig").setup({
+			require("mason-tool-installer").setup({
 				ensure_installed = {
-					"lua_ls",
+					"lua-language-server",
 					"clangd",
-					"cmake",
+					"cmake-language-server",
 					"texlab",
-					"autotools_ls", -- for makefile
-					"marksman", -- for markdown
+					"autotools-language-server",
+					"marksman",
 					"basedpyright",
-					-- for ocaml install "ocaml-lsp-server" in opam
 				},
 			})
 		end,
 	},
+	-- LSP keymaps and cmp capability wiring (no nvim-lspconfig needed)
 	{
-		"neovim/nvim-lspconfig",
+		-- Dummy spec: just runs the native LSP setup after mason installs servers
+		dir = vim.fn.stdpath("config"),
+		name = "lsp-native-setup",
+		lazy = false,
+		dependencies = {
+			"williamboman/mason.nvim",
+			"WhoIsSethDaniel/mason-tool-installer.nvim",
+			"hrsh7th/cmp-nvim-lsp",
+		},
 		config = function()
+			-- Merge cmp capabilities into every server
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
-			local lspconfig = require("lspconfig")
-			lspconfig.lua_ls.setup({
+
+			----------------------------------------------------------------
+			-- Server configurations via vim.lsp.config()
+			----------------------------------------------------------------
+			vim.lsp.config("lua_ls", {
 				capabilities = capabilities,
 			})
-			lspconfig.clangd.setup({
-				-- cmd = { "/usr/lib/llvm-14/bin/clang++", "--background-index" },
-				-- root_dir = lspconfig.util.root_pattern("compile_commands.json", ".clangd"),
-        capabilities = capabilities,
-        cmd = {
-          "clangd",
-          "--query-driver=/usr/bin/clang++",
-        },
+
+			vim.lsp.config("clangd", {
+				capabilities = capabilities,
+				cmd = {
+					"clangd",
+					"--query-driver=/usr/bin/clang++",
+				},
+				filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
+				root_markers = { "compile_commands.json", ".clangd", ".git" },
 			})
-			lspconfig.cmake.setup({
+
+			vim.lsp.config("cmake", {
 				capabilities = capabilities,
 			})
-			lspconfig.texlab.setup({
+
+			vim.lsp.config("texlab", {
 				capabilities = capabilities,
 			})
-			lspconfig.autotools_ls.setup({
+
+			vim.lsp.config("autotools_ls", {
 				capabilities = capabilities,
 			})
-			lspconfig.marksman.setup({
+
+			vim.lsp.config("marksman", {
 				capabilities = capabilities,
 			})
-			lspconfig.basedpyright.setup({
+
+			vim.lsp.config("basedpyright", {
 				capabilities = capabilities,
 			})
-			-- "Shift+k" for showing documentation
-			-- "Shift+d" for going to definition
+
+			----------------------------------------------------------------
+			-- Enable all configured servers
+			----------------------------------------------------------------
+			vim.lsp.enable({
+				"lua_ls",
+				"clangd",
+				"cmake",
+				"texlab",
+				"autotools_ls",
+				"marksman",
+				"basedpyright",
+			})
+
+			----------------------------------------------------------------
+			-- Keymaps (identical to your old config)
+			----------------------------------------------------------------
 			vim.keymap.set("n", "<leader>h", vim.lsp.buf.hover, {})
 			vim.keymap.set("n", "<leader>d", vim.lsp.buf.definition, {})
 			vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, {})
-      vim.keymap.set("n", "en", vim.diagnostic.goto_next)
-      vim.keymap.set("n", "EN", vim.diagnostic.goto_prev)
+			vim.keymap.set("n", "en", vim.diagnostic.goto_next)
+			vim.keymap.set("n", "EN", vim.diagnostic.goto_prev)
 		end,
 	},
 }

@@ -14,6 +14,7 @@ return {
 			"Token not allowed in a PDF string",
 		}
     vim.g.vimtex_compiler_latexmk = {
+      out_dir = "build",
       options = {
         '-pdf',
         '-shell-escape',
